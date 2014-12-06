@@ -60,6 +60,7 @@ TARGET_LDFLAGS += -L$(STAGING_DIR)/usr/lib
 
 CMAKE_OPTIONS = \
 	-DLUAPATH=/usr/lib/lua \
+	-DCMAKE_SKIP_RPATH=TRUE \
 	$(if $(DEBUG),-DUCI_DEBUG=ON)
 
 define Package/libuci/install
