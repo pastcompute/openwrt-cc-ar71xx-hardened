@@ -1,0 +1,35 @@
+From 59c06f6717522d3e8326cd78b064ecefb9dd6a63 Mon Sep 17 00:00:00 2001
+From: Andrew McDonnell <bugs@andrewmcdonnell.net>
+Date: Sat, 6 Dec 2014 14:18:31 +1030
+Subject: [PATCH 2/2] Fix intermittent stack overflow error
+
+---
+ iwinfo_nl80211.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/iwinfo_nl80211.c b/iwinfo_nl80211.c
+index 2731b2b..be58c56 100644
+--- a/iwinfo_nl80211.c
++++ b/iwinfo_nl80211.c
+@@ -2446,15 +2446,15 @@ static int nl80211_get_ifcomb_cb(struct nl_msg *msg, void *arg)
+ 			[NL80211_IFACE_COMB_LIMITS] = { .type = NLA_NESTED },
+ 			[NL80211_IFACE_COMB_MAXNUM] = { .type = NLA_U32 },
+ 		};
+-		struct nlattr *tb_comb[NUM_NL80211_IFACE_COMB];
++		struct nlattr *tb_comb[NUM_NL80211_IFACE_COMB+1];
+ 		static struct nla_policy iface_limit_policy[NUM_NL80211_IFACE_LIMIT] = {
+ 			[NL80211_IFACE_LIMIT_TYPES] = { .type = NLA_NESTED },
+ 			[NL80211_IFACE_LIMIT_MAX] = { .type = NLA_U32 },
+ 		};
+-		struct nlattr *tb_limit[NUM_NL80211_IFACE_LIMIT];
++		struct nlattr *tb_limit[NUM_NL80211_IFACE_LIMIT+1];
+ 		struct nlattr *limit;
+ 
+-		nla_parse_nested(tb_comb, NL80211_BAND_ATTR_MAX, comb, iface_combination_policy);
++		nla_parse_nested(tb_comb, NUM_NL80211_IFACE_COMB, comb, iface_combination_policy);
+ 
+ 		if (!tb_comb[NL80211_IFACE_COMB_LIMITS])
+ 			continue;
+-- 
+1.9.1
+
