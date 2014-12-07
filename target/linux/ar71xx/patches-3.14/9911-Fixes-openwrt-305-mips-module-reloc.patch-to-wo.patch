@@ -1,0 +1,40 @@
+From 3e550bc942902e952f9cdde0015a7d92ce6ff4c9 Mon Sep 17 00:00:00 2001
+From: Andrew McDonnell <bugs@andrewmcdonnell.net>
+Date: Sat, 6 Dec 2014 09:07:30 +1030
+Subject: [PATCH 6/6] 9911 Fixes openwrt-305-mips-module-reloc.patch to work
+ with grsecurity-3.14.25
+
+---
+ arch/mips/kernel/module.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/arch/mips/kernel/module.c b/arch/mips/kernel/module.c
+index 7ea2716..36b1400 100644
+--- a/arch/mips/kernel/module.c
++++ b/arch/mips/kernel/module.c
+@@ -191,10 +191,18 @@ static inline bool is_phys_addr(void *ptr)
+ void module_free(struct module *mod, void *module_region)
+ {
+ 	if (is_phys_addr(module_region)) {
+-		if (mod->module_init == module_region)
+-			free_phys(module_region, mod->init_size);
+-		else if (mod->module_core == module_region)
+-			free_phys(module_region, mod->core_size);
++#ifdef CONFIG_PAX_KERNEXEC
++#error CONFIG_PAX_KERNEXEC not supported by OpenWRT mips target
++#endif
++		/* For now we dont support CONFIG_PAX_KERNEXEC; just treat both the same */
++		if (mod->module_init_rw == module_region)
++			free_phys(module_region, mod->init_size_rw);
++		else if (mod->module_init_rx == module_region)
++			free_phys(module_region, mod->init_size_rx);
++		else if (mod->module_core_rw == module_region)
++			free_phys(module_region, mod->core_size_rw);
++		else if (mod->module_core_rx == module_region)
++			free_phys(module_region, mod->core_size_rx);
+ 		else
+ 			BUG();
+ 	} else {
+-- 
+1.9.1
+

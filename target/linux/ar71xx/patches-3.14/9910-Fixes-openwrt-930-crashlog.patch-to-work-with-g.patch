@@ -1,0 +1,28 @@
+From cd5a2a9849e121341b1477490005f1f80d5e657f Mon Sep 17 00:00:00 2001
+From: Andrew McDonnell <bugs@andrewmcdonnell.net>
+Date: Sat, 6 Dec 2014 09:07:31 +1030
+Subject: [PATCH 5/6] 9910 Fixes openwrt-930-crashlog.patch to work with
+ grsecurity-3.14.25
+
+---
+ kernel/crashlog.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/crashlog.c b/kernel/crashlog.c
+index 04462e1..627c30e 100644
+--- a/kernel/crashlog.c
++++ b/kernel/crashlog.c
+@@ -145,8 +145,8 @@ static void crashlog_do_dump(struct kmsg_dumper *dumper,
+ 		crashlog_printf("Modules:");
+ 		list_for_each_entry(m, crashlog_modules, list) {
+ 			crashlog_printf("\t%s@%p+%x", m->name,
+-			m->module_core, m->core_size,
+-			m->module_init, m->init_size);
++			m->module_core_rx, m->core_size_rx,
++			m->module_init_rx, m->init_size_rx); /* FIXME: sprintf bug here! */ /* FIXME: grsec... */
+ 		}
+ 		crashlog_printf("\n");
+ 		first = false;
+-- 
+1.9.1
+
