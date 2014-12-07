@@ -54,6 +54,7 @@ TARGET_CPPFLAGS:=-I. -I.. $(TARGET_CPPFLAGS)
 TARGET_CFLAGS += $(FPIC)
 
 define Build/Compile
+	$(SED) '/^SHLIB_XLDFLAGS/ s/-Wl,-rpath,\$$$$(libdir)//' $(PKG_BUILD_DIR)/shlib/Makefile
 	$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) \
 		DESTDIR="$(PKG_INSTALL_DIR)" \
 		all install
