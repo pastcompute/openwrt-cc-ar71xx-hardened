@@ -1,0 +1,11 @@
+--- a/src/Makefile	2014-12-07 14:13:46.722387209 +1030
++++ b/src/Makefile	2014-12-07 14:14:44.006516434 +1030
+@@ -57,7 +57,7 @@
+ 	$(RANLIB) $@
+ 
+ $(LUA_SO): $(CORE_O) $(LIB_O)
+-	$(CC) -o $@.$(PKG_VERSION) -shared -Wl,-soname="$@.$(PKG_VERSION)" $?
++	$(CC) -o $@.$(PKG_VERSION) -shared $(MYLDFLAGS) -Wl,-soname="$@.$(PKG_VERSION)" $?
+ 	ln -fs $@.$(PKG_VERSION) $@
+ 
+ $(LUA_T): $(LUA_O) $(LUA_SO)
