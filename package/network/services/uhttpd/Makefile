@@ -109,7 +109,8 @@ endef
 
 TARGET_LDFLAGS += -lcrypt
 
-CMAKE_OPTIONS = -DTLS_SUPPORT=on
+CMAKE_OPTIONS = -DTLS_SUPPORT=on \
+	-DCMAKE_SKIP_RPATH=TRUE
 
 define Package/uhttpd/install
 	$(INSTALL_DIR) $(1)/etc/init.d
