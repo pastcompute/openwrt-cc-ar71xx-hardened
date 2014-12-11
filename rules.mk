@@ -178,6 +178,11 @@ else
   endif
 endif
 
+ifeq ($(CONFIG_SECURITY_TRY_SSP_EVERYWHERE),y)
+  TARGET_SSP_FLAGS= -D_FORTIFY_SOURCE=2 -fstack-protector-all --param=ssp-buffer-size=4
+  TARGET_CFLAGS+= $(TARGET_SSP_FLAGS)
+endif
+
 export PATH:=$(TARGET_PATH)
 export STAGING_DIR
 export SH_FUNC:=. $(INCLUDE_DIR)/shell.sh;
