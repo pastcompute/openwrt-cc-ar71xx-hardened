@@ -92,6 +92,7 @@ define Build/Compile
 		CROSS_COMPILE="$(TARGET_CROSS)" \
 		KBUILD_HAVE_NLS=no \
 		EXTRA_CFLAGS="$(TARGET_CFLAGS)" \
+		EXTRA_LDFLAGS="-z relro -z now" \
 		ARCH="$(ARCH)" \
 		SKIP_STRIP=y \
 		LDLIBS="$(LDLIBS)" \
@@ -103,6 +104,7 @@ define Build/Compile
 		CC="$(TARGET_CC)" \
 		CROSS_COMPILE="$(TARGET_CROSS)" \
 		EXTRA_CFLAGS="$(TARGET_CFLAGS)" \
+		EXTRA_LDFLAGS="-z relro -z now" \
 		ARCH="$(ARCH)" \
 		CONFIG_PREFIX="$(PKG_INSTALL_DIR)" \
 		LDLIBS="$(LDLIBS)" \
