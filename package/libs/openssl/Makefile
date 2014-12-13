@@ -141,6 +141,7 @@ define Build/Configure
 			$(OPENSSL_NO_CIPHERS) \
 			$(OPENSSL_OPTIONS) \
 	)
+	$(SED) '/^DO_GNU_APP=LDFLAGS=/ s/LDFLAGS=.*/LDFLAGS=\$$$$(CFLAGS)/' $(PKG_BUILD_DIR)/Makefile.shared
 	# XXX: OpenSSL "make depend" will look for installed headers before its own,
 	# so remove installed stuff first
 	-$(SUBMAKE) -j1 clean-staging
