@@ -227,6 +227,10 @@ ifneq ($(CONFIG_CCACHE),)
   HOSTCXX:= ccache $(HOSTCXX)
 endif
 
+ifeq ($(CONFIG_SECURITY_TRY_RELRO_EVERYWHERE),y)
+  TARGET_LDFLAGS+= -Wl,-z,relro -Wl,-z,now
+endif
+
 TARGET_CONFIGURE_OPTS = \
   AR=$(TARGET_CROSS)ar \
   AS="$(TARGET_CC) -c $(TARGET_ASFLAGS)" \

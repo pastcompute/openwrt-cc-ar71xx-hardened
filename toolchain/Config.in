@@ -55,6 +55,21 @@ menuconfig TARGET_OPTIONS
 		  The default is currently N to avoid affecting existing systems, but it is hoped
 		  that at some point the default will be changed to Y.
 
+  config SECURITY_TRY_RELRO_EVERYWHERE
+		bool "Try and build with RELRO and NOW enabled for binaries and libraries" if TARGET_OPTIONS
+		default n
+		help
+		  Try and force all code to be built with the following flags:
+		     -Wl,-z,relro -Wl,-z,now
+		  This may improve security in various circumstances, provided this feature is
+		  supported in the kernel.
+
+		  Note that some external packages may not support this option.
+		  Note that this will may disable some debugger functionality.
+
+		  The default is currently N to avoid affecting existing systems, but it is hoped
+		  that at some point the default will be changed to Y.
+
 menuconfig EXTERNAL_TOOLCHAIN
 	bool
 	prompt "Use external toolchain"  if DEVEL
