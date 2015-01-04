@@ -1,0 +1,25 @@
+From b8c761c625f674eea93af9ac7067421ea8926770 Mon Sep 17 00:00:00 2001
+From: Andrew McDonnell <bugs@andrewmcdonnell.net>
+Date: Sat, 6 Dec 2014 09:07:32 +1030
+Subject: [PATCH 4/6] 9905 Fixes openwrt-530-jffs2_make_lzma_available.patch to
+ work with grsecurity-3.14.25+ stricter compiler options
+
+---
+ include/linux/lzma.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/lzma.h b/include/linux/lzma.h
+index 5f31334..bf1a950 100644
+--- a/include/linux/lzma.h
++++ b/include/linux/lzma.h
+@@ -57,6 +57,6 @@ static void p_lzma_free(void *p, void *address)
+                 LZMA_FREE(address);
+ }
+ 
+-static ISzAlloc lzma_alloc = {p_lzma_malloc, p_lzma_free};
++static ISzAlloc lzma_alloc = { .Alloc = p_lzma_malloc, .Free = p_lzma_free};
+ 
+ #endif
+-- 
+1.9.1
+

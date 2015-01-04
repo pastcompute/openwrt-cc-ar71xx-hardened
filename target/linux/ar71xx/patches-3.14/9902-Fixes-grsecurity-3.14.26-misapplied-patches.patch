@@ -1,0 +1,28 @@
+From cd7bd908f73d994d16e99b15fadf655ababba61f Mon Sep 17 00:00:00 2001
+From: Andrew McDonnell <bugs@andrewmcdonnell.net>
+Date: Sat, 6 Dec 2014 09:07:31 +1030
+Subject: [PATCH 3/6] 9902 Fixes grsecurity-3.14.26 misapplied patches
+
+---
+ kernel/module.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/module.c b/kernel/module.c
+index f8edb26..7eb5c81 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2761,10 +2761,10 @@ static int check_modinfo(struct module *mod, struct load_info *info, int flags)
+ 		pr_warn("%s: module is from the staging directory, the quality "
+ 			"is unknown, you have been warned.\n", mod->name);
+ 	}
+-#endif
+ 
+ 	/* Set up license info based on the info section */
+ 	set_license(mod, license);
++#endif
+ 
+ 	return 0;
+ }
+-- 
+1.9.1
+

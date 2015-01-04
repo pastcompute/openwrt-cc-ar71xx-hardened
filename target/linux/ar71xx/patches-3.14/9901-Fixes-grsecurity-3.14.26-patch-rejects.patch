@@ -1,0 +1,87 @@
+From b6251cfa8c5bcc029078dbbf717bd9dbf04863c4 Mon Sep 17 00:00:00 2001
+From: Andrew McDonnell <bugs@andrewmcdonnell.net>
+Date: Sat, 6 Dec 2014 09:07:30 +1030
+Subject: [PATCH 2/6] 9901 Fixes grsecurity-3.14.26 patch rejects
+
+---
+ include/linux/fs.h       |  2 +-
+ include/linux/skbuff.h   |  2 +-
+ kernel/time/timer_list.c |  4 ++++
+ mm/vmstat.c              | 17 ++++++++++++-----
+ 4 files changed, 18 insertions(+), 7 deletions(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 21f26b1..b6864a1 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1340,7 +1340,7 @@ struct super_block {
+ 	 * Indicates how deep in a filesystem stack this SB is
+ 	 */
+ 	int s_stack_depth;
+-};
++} __randomize_layout;
+ 
+ extern struct timespec current_fs_time(struct super_block *sb);
+ 
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index 1b5b72f..413a476 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -1828,7 +1828,7 @@ static inline int pskb_network_may_pull(struct sk_buff *skb, unsigned int len)
+  * NET_IP_ALIGN(2) + ethernet_header(14) + IP_header(20/40) + ports(8)
+  */
+ #ifndef NET_SKB_PAD
+-#define NET_SKB_PAD	max(64, L1_CACHE_BYTES)
++#define NET_SKB_PAD	max(_AC(64,UL), L1_CACHE_BYTES)
+ #endif
+ 
+ int ___pskb_trim(struct sk_buff *skb, unsigned int len);
+diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
+index 7f722f1..414efb6 100644
+--- a/kernel/time/timer_list.c
++++ b/kernel/time/timer_list.c
+@@ -372,7 +372,11 @@ static int __init init_timer_list_procfs(void)
+ 
+ 	if (IS_ENABLED(CONFIG_PROC_STRIPPED))
+ 		return 0;
++#ifdef CONFIG_GRKERNSEC_PROC_ADD
++	pe = proc_create("timer_list", 0400, NULL, &timer_list_fops);
++#else
+ 	pe = proc_create("timer_list", 0444, NULL, &timer_list_fops);
++#endif
+ 	if (!pe)
+ 		return -ENOMEM;
+ 	return 0;
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index 45e8cf1..1777de4 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1314,13 +1314,20 @@ static int __init setup_vmstat(void)
+ 	}
+ 	put_online_cpus();
+ #endif
++
+ #ifdef CONFIG_PROC_FS
+-	if (!IS_ENABLED(CONFIG_PROC_STRIPPED)) {
+-		proc_create("buddyinfo", S_IRUGO, NULL, &fragmentation_file_operations);
+-		proc_create("pagetypeinfo", S_IRUGO, NULL, &pagetypeinfo_file_ops);
+-		proc_create("zoneinfo", S_IRUGO, NULL, &proc_zoneinfo_file_operations);
++	{
++		mode_t gr_mode = S_IRUGO;
++#ifdef CONFIG_GRKERNSEC_PROC_ADD
++		gr_mode = S_IRUSR;
++#endif
++	  if (!IS_ENABLED(CONFIG_PROC_STRIPPED)) {
++		  proc_create("buddyinfo", gr_mode, NULL, &fragmentation_file_operations);
++		  proc_create("pagetypeinfo", gr_mode, NULL, &pagetypeinfo_file_ops);
++		  proc_create("vmstat", S_IRUGO, NULL, &proc_vmstat_file_operations);
++	  }
++		proc_create("zoneinfo", gr_mode, NULL, &proc_zoneinfo_file_operations);
+ 	}
+-	proc_create("vmstat", S_IRUGO, NULL, &proc_vmstat_file_operations);
+ #endif
+ 	return 0;
+ }
+-- 
+1.9.1
+
